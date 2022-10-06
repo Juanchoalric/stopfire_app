@@ -6,6 +6,9 @@ import 'package:camera/camera.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import  'package:intl/intl.dart';
+
+import 'camera_screen.dart';
 
 class ConfirmationScreen extends StatefulWidget {
   final XFile? pictureFile;
@@ -18,6 +21,23 @@ class ConfirmationScreen extends StatefulWidget {
 }
 
 class _ConfirmationScreenState extends State<ConfirmationScreen> {
+
+  createAlertDialog(BuildContext context){
+    return showDialog(context: context, builder: (context) {
+      return AlertDialog(
+        title: const Text("Tu imagen fue enviada!"),
+        content: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+              primary: Colors.red,
+              textStyle: const TextStyle(color: Colors.white)
+          ),
+          onPressed: (){
+            Navigator.pop(context);
+          },
+          child: const Text("VOLVER"),),
+      );
+    });
+  }
   
   Future<void> uploadImage ()async{
 
@@ -27,7 +47,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
     var length = await widget.pictureFile!.length();
 
     //var uri = Uri.parse('http://10.0.2.2:5000/analyze');
-    var uri = Uri.parse("http://192.168.96.1:5000/analyze");
+    var uri = Uri.parse("http://192.168.1.9:5000/analyze");
     var request = http.MultipartRequest('POST', uri);
 
     request.files.add(
@@ -39,21 +59,16 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
         )
     );
 
-    request.fields['taken_at'] = "18/09/19 01:55:19" ;
+    String date = DateFormat("dd/MM/yy HH:mm:ss").format(DateTime.now());
+
+    request.fields['taken_at'] = date ;
     request.fields['latitude'] = widget.position!.latitude.toString();
     request.fields['longitude'] = widget.position!.longitude.toString();
-    request.fields['id_camera'] = "2" ;
-    request.fields['camera_type'] = "phone" ;
-    request.fields['false_alarm'] = '0' ;
+    request.fields['id_camera'] = "5" ;
+    request.fields['camera_type'] = "Punto movil" ;
+    request.fields['zone'] = '5' ;
 
-    //var multiport = http.MultipartFile(
-    //    'file',
-    //    stream,
-    // length);
-
-    //request.files.add(multiport);
-
-    await request.send() ;
+    await request.send();
   }
 
   @override
@@ -71,7 +86,9 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                 primary: Colors.red, 
                 textStyle: const TextStyle(color: Colors.white)
                 ),
-              onPressed: (){}, 
+              onPressed: (){
+                Navigator.pop(context);
+              },
               child: const Text("BACK"),),
             const Padding(
               padding: EdgeInsets.fromLTRB(30.0,0,0,0)),
@@ -83,26 +100,11 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
               // Image.file(File(widget.pictureFile!.path))
               onPressed: () async {
                 uploadImage();
+                createAlertDialog(context);
               }, 
               child: const Text("SEND"))
           ],
           ),
-          Padding(
-          padding: const EdgeInsets.all(8.0), 
-          child: Text(
-            style: const TextStyle(
-              backgroundColor: Colors.white),
-              widget.position!.latitude.toString()
-              )
-              ),
-          Padding(
-          padding: const EdgeInsets.all(8.0), 
-          child: Text(
-            style: const TextStyle(
-              backgroundColor: Colors.white),
-              widget.position!.longitude.toString()
-              )
-              ),
         ],
       ),
     );

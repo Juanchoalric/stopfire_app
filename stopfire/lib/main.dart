@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:stopfire/splash_screen.dart';
 import 'home.dart';
 
 void main() {
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.red,
         accentColor: Colors.redAccent,
       ),
-      home: HomePage(),
+      home: const HomePage(),
     );
   }
 }
