@@ -68,7 +68,7 @@ class HomePage extends StatelessWidget {
               ),
             );
           },
-          child: const Text('Launch Camera'),
+          child: const Text('Iniciar Camera'),
         ),
       ),
     );

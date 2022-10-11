@@ -53,7 +53,7 @@ class _CameraPageState extends State<CameraPage> {
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
-        title: const Text("Camera")),
+        title: const Text("Cámara")),
       body: CameraPreview(controller),
       floatingActionButton: 
         FloatingActionButton(

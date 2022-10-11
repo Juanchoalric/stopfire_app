@@ -25,7 +25,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
   createAlertDialog(BuildContext context){
     return showDialog(context: context, builder: (context) {
       return AlertDialog(
-        title: const Text("Tu imagen fue enviada!"),
+        title: const Text("¡Tu alerta fue enviada!"),
         content: ElevatedButton(
           style: ElevatedButton.styleFrom(
               primary: Colors.red,
@@ -64,7 +64,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
     request.fields['taken_at'] = date ;
     request.fields['latitude'] = widget.position!.latitude.toString();
     request.fields['longitude'] = widget.position!.longitude.toString();
-    request.fields['id_camera'] = "5" ;
+    request.fields['id_camera'] = "Cámara movil" ;
     request.fields['camera_type'] = "Punto movil" ;
     request.fields['zone'] = '5' ;
 
@@ -74,7 +74,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Confirmation")),
+      appBar: AppBar(title: const Text("Confirmar")),
       body: Column(
         children: [
           Image.file(File(widget.pictureFile!.path)),
@@ -89,7 +89,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
               onPressed: (){
                 Navigator.pop(context);
               },
-              child: const Text("BACK"),),
+                child: const Text("VOLVER"),),
             const Padding(
               padding: EdgeInsets.fromLTRB(30.0,0,0,0)),
             ElevatedButton(
@@ -102,7 +102,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                 uploadImage();
                 createAlertDialog(context);
               }, 
-              child: const Text("SEND"))
+              child: const Text("ENVIAR"))
           ],
           ),
         ],
