@@ -7,15 +7,14 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import  'package:intl/intl.dart';
+import 'package:stopfire/home.dart';
 
 import 'camera_screen.dart';
 
 class ConfirmationScreen extends StatefulWidget {
   final XFile? pictureFile;
-  final String uri = 'http://127.0.0.1:5000/analyze';
   final Position? position;
   const ConfirmationScreen({this.pictureFile, this.position, Key? key}) : super(key: key);
-
   @override
   State<ConfirmationScreen> createState() => _ConfirmationScreenState();
 }
@@ -32,14 +31,41 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
               textStyle: const TextStyle(color: Colors.white)
           ),
           onPressed: (){
-            Navigator.pop(context);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const HomePage(),
+              ),
+            );
+          },
+          child: const Text("VOLVER"),),
+      );
+    });
+  }
+
+  createErrorAlertDialog(BuildContext context){
+    return showDialog(context: context, builder: (context) {
+      return AlertDialog(
+        title: const Text("Hubo un error y no recibimos la imagen, vuelve a intentarlo"),
+        content: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+              primary: Colors.red,
+              textStyle: const TextStyle(color: Colors.white)
+          ),
+          onPressed: (){
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const HomePage(),
+              ),
+            );
           },
           child: const Text("VOLVER"),),
       );
     });
   }
   
-  Future<void> uploadImage ()async{
+  Future<int> uploadImage ()async{
 
     var stream  = http.ByteStream(widget.pictureFile!.openRead());
     stream.cast();
@@ -47,7 +73,8 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
     var length = await widget.pictureFile!.length();
 
     //var uri = Uri.parse('http://10.0.2.2:5000/analyze');
-    var uri = Uri.parse("http://192.168.1.9:5000/analyze");
+    //var uri = Uri.parse("http://172.20.10.4:5000/analyze");
+    var uri = Uri.parse("http://10.230.61.125:5000/analyze");
     var request = http.MultipartRequest('POST', uri);
 
     request.files.add(
@@ -64,11 +91,13 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
     request.fields['taken_at'] = date ;
     request.fields['latitude'] = widget.position!.latitude.toString();
     request.fields['longitude'] = widget.position!.longitude.toString();
-    request.fields['id_camera'] = "Cámara movil" ;
-    request.fields['camera_type'] = "Punto movil" ;
-    request.fields['zone'] = '5' ;
+    request.fields['id_camera'] = "App StopFire" ;
+    request.fields['camera_type'] = "Punto móvil" ;
+    request.fields['zone'] = 'Patrullero' ;
 
-    await request.send();
+    var response = await http.Response.fromStream(await request.send()).catchError((onError) => 500);
+    var status = response.statusCode;
+    return status;
   }
 
   @override
@@ -99,8 +128,13 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                 ),
               // Image.file(File(widget.pictureFile!.path))
               onPressed: () async {
-                uploadImage();
-                createAlertDialog(context);
+                final status = await uploadImage();
+                if (status == 200){
+                  createAlertDialog(context);
+                }
+                else {
+                  createErrorAlertDialog(context);
+                }
               }, 
               child: const Text("ENVIAR"))
           ],
