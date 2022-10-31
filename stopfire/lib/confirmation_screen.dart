@@ -74,7 +74,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
 
     //var uri = Uri.parse('http://10.0.2.2:5000/analyze');
     //var uri = Uri.parse("http://172.20.10.4:5000/analyze");
-    var uri = Uri.parse("http://10.230.61.125:5000/analyze");
+    var uri = Uri.parse("http://54.207.31.1:5000/analyze");
     var request = http.MultipartRequest('POST', uri);
 
     request.files.add(
